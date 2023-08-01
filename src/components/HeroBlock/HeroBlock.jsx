@@ -16,7 +16,7 @@ export const HeroBlock = () => <>
 			</div>
 
 			<div className="max-w-4xl mx-auto mt-5 text-center text-md text-white/80">
-				Kava Rise program rewards us for the TVL that our dapps <a href="https://counterstake.org" target="_blank" className="underline" rel="noreferrer">Counterstake</a> and <a href="https://linetoken.org" target="_blank" className="underline" rel="noreferrer">LINE</a> create on the Kava network. We share 90% of these rewards with you if you actually contribute to this TVL and hold the tokens imported through Counterstake bridge in your Obyte wallet.
+				Kava Rise program rewards us for the TVL that our dapps <a href="https://counterstake.org" target="_blank" className="underline" rel="noopener">Counterstake</a> and <a href="https://linetoken.org" target="_blank" className="underline" rel="noopener">LINE</a> create on the Kava network. We share 90% of these rewards with you if you actually contribute to this TVL and hold the tokens imported through Counterstake bridge in your Obyte wallet.
 			</div>
 		</div>
 	</div>
