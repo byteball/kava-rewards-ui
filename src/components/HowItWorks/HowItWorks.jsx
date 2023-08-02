@@ -1,14 +1,14 @@
 import { changeNetwork } from "utils";
 
 export const HowItWorks = () => (<div className="max-w-5xl px-6 mx-auto lg:px-8">
-  <div className="max-w-2xl px-10 mx-auto mt-10 mb-20 text-4xl font-bold text-center text-white">Here is how to take advantage of these rewards</div>
+  <h2 className="max-w-2xl px-10 mx-auto mt-10 mb-20 text-4xl font-bold text-center text-white">Here is how to take advantage of these rewards</h2>
 
   <div className="flex flex-col items-center justify-between mt-10 space-x-5 md:flex-row">
     <div className="w-full md:w-[50%] flex justify-center">
       <img className="max-w-[60%] mb-5 md:mb-0 md:max-w-[90%]" src="/bridge-any-token-from-kava.svg" alt="Bridge any token from Kava" />
     </div>
     <div className="w-full md:w-[50%]">
-      <div className="text-2xl font-bold text-kava">Option 1: Bridge any token from Kava</div>
+      <h3 className="text-2xl font-bold text-kava">Option 1: Bridge any token from Kava</h3>
       <div className="mt-5 space-y-4">
         <div className="flex items-center space-x-3">
           <div className="flex items-center justify-center w-10 h-10 rounded-full shrink-0 bg-kava/20 text-white/60">1</div>
@@ -37,7 +37,7 @@ export const HowItWorks = () => (<div className="max-w-5xl px-6 mx-auto lg:px-8"
 
   <div className="flex flex-col-reverse items-center justify-between mt-20 space-x-5 md:flex-row">
     <div className="w-full md:w-[50%]">
-      <div className="text-2xl font-bold text-kava">Option 2: Get increased rewards on your GBYTE</div>
+      <h3 className="text-2xl font-bold text-kava">Option 2: Get increased rewards on your GBYTE</h3>
       <div className="mt-5 space-y-4">
         <div className="flex items-center space-x-3">
           <div className="flex items-center justify-center w-10 h-10 rounded-full shrink-0 bg-kava/20 text-white/60">1</div>
@@ -82,7 +82,7 @@ export const HowItWorks = () => (<div className="max-w-5xl px-6 mx-auto lg:px-8"
       />
     </div>
 
-    <div className="max-w-2xl px-10 mx-auto mt-20 mb-20 text-4xl font-bold text-center text-white">What are the APYs?</div>
+    <h2 className="max-w-2xl px-10 mx-auto mt-20 mb-20 text-4xl font-bold text-center text-white">What are the APYs?</h2>
 
     <div className="flex flex-col items-center justify-between mt-20 md:space-x-5 md:flex-row">
       <div className="w-full md:w-[50%]">
@@ -102,7 +102,7 @@ export const HowItWorks = () => (<div className="max-w-5xl px-6 mx-auto lg:px-8"
 
   </div>
 
-  <div className="max-w-2xl px-10 mx-auto mt-20 mb-20 text-4xl font-bold text-center text-white">How to get started on Kava?</div>
+  <h2 className="max-w-2xl px-10 mx-auto mt-20 mb-20 text-4xl font-bold text-center text-white">How to get started on Kava?</h2>
 
   <div className="flex flex-col-reverse items-center justify-between mt-20 space-x-5 md:flex-row">
     <div className="w-full md:w-[50%] space-y-4">
@@ -114,7 +114,7 @@ export const HowItWorks = () => (<div className="max-w-5xl px-6 mx-auto lg:px-8"
     </div>
   </div>
 
-  <div className="max-w-2xl px-3 mx-auto mt-20 mb-20 text-3xl font-bold text-center text-white md:px-10 md:text-4xl">When are the rewards distributed?</div>
+  <h2 className="max-w-2xl px-3 mx-auto mt-20 mb-20 text-3xl font-bold text-center text-white md:px-10 md:text-4xl">When are the rewards distributed?</h2>
 
   <div className="flex flex-col items-center justify-between mt-20 space-x-5 md:flex-row">
     <div className="w-full md:w-[50%] mb-5 md:mb-0 flex justify-center">
