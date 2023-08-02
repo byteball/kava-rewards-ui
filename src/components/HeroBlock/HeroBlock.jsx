@@ -10,9 +10,9 @@ export const HeroBlock = () => <>
 				<h1 className="text-5xl font-bold tracking-tight text-white sm:text-7xl">
 					Rewards from <div className="text-kava">Kava Rise</div>
 				</h1>
-				<p className="max-w-3xl mx-auto mt-6 text-2xl font-bold leading-8 text-white">
+				<h2 className="max-w-3xl mx-auto mt-6 text-2xl font-bold leading-8 text-white">
 					Get a share of Kava Rise rewards by simply holding tokens imported from Kava in your Obyte wallet
-				</p>
+				</h2>
 			</div>
 
 			<div className="max-w-4xl mx-auto mt-5 text-center text-md text-white/80">
