@@ -30,7 +30,8 @@
       "react-app/jest"
     ],
     "rules": {
-      "import/no-anonymous-default-export": "off"
+      "import/no-anonymous-default-export": "off",
+      "react/jsx-no-target-blank": "off"
     }
   },
   "browserslist": {
