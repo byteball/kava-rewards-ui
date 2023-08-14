@@ -1,4 +1,4 @@
-import { changeNetwork } from "utils";
+import { changeNetwork, openExternalPageEvent } from "utils";
 
 export const HowItWorks = () => (<div className="max-w-5xl px-6 mx-auto lg:px-8">
   <h2 className="max-w-2xl px-10 mx-auto mt-10 mb-20 text-4xl font-bold text-center text-white">Here is how to take advantage of these rewards</h2>
@@ -29,7 +29,7 @@ export const HowItWorks = () => (<div className="max-w-5xl px-6 mx-auto lg:px-8"
       </div>
 
       <div className="mt-5 space-y-2 text-white/80">
-        <div>This works for any token that is listed on Coingecko and has a bridge to Obyte on <a href="https://counterstake.org" target="_blank" rel="noopener" className="underline text-kava">Counterstake</a>. If it doesn’t have a bridge yet, you can <a href="https://counterstake.org/create" target="_blank" rel="noopener" className="underline text-kava">add it</a>.</div>
+        <div>This works for any token that is listed on Coingecko and has a bridge to Obyte on <a href="https://counterstake.org" onClick={()=> openExternalPageEvent("OPTION-1", "CS")} target="_blank" rel="noopener" className="underline text-kava">Counterstake</a>. If it doesn’t have a bridge yet, you can <a href="https://counterstake.org/create" onClick={()=> openExternalPageEvent("OPTION-1", "CS-CREATE")}  target="_blank" rel="noopener" className="underline text-kava">add it</a>.</div>
         <div>You would be rewarded for the TVL you create on the Kava side of Counterstake when you bridge the token.</div>
       </div>
     </div>
@@ -46,7 +46,7 @@ export const HowItWorks = () => (<div className="max-w-5xl px-6 mx-auto lg:px-8"
 
         <div className="flex items-center space-x-3">
           <div className="flex items-center justify-center w-10 h-10 rounded-full shrink-0 bg-kava/20 text-white/60">2</div>
-          <div>Use your GBYTE-on-Kava to borrow LINE tokens in the <a href="https://linetoken.org/" target="_blank" rel="noopener" className="underline text-kava">LINE dapp</a>.</div>
+          <div>Use your GBYTE-on-Kava to borrow LINE tokens in the <a href="https://linetoken.org/" target="_blank" rel="noopener" onClick={()=> openExternalPageEvent("OPTION-2", "LINE")} className="underline text-kava">LINE dapp</a>.</div>
         </div>
 
         <div className="flex items-center space-x-3">
@@ -62,7 +62,7 @@ export const HowItWorks = () => (<div className="max-w-5xl px-6 mx-auto lg:px-8"
 
       <div className="mt-5 space-y-4 text-white/80">
         <div>This way, you create TVL both in the LINE dapp and in the Counterstake bridge and get a <b>double rate of reward </b> for holding LINE tokens in your Obyte wallet.</div>
-        <div>LINE tokens are price-protected, meaning that you can convert them back to the same amount of GBYTEs (minus fees). You retain your exposure to GBYTE when borrowing LINE. Learn more about LINE’s price protection on its <a href="https://linetoken.org" target="_blank" rel="noopener" className="underline text-kava">website</a>.</div>
+        <div>LINE tokens are price-protected, meaning that you can convert them back to the same amount of GBYTEs (minus fees). You retain your exposure to GBYTE when borrowing LINE. Learn more about LINE’s price protection on its <a href="https://linetoken.org" target="_blank" rel="noopener" onClick={()=> openExternalPageEvent("OPTION-2", "LINE")} className="underline text-kava">website</a>.</div>
       </div>
     </div>
     <div className="w-full md:w-[50%] flex justify-center"><img className="max-w-[60%] mb-5 md:mb-0 md:max-w-[90%]" src="/get-increased-rewards-on-your-gbyte.svg" alt="Get increased rewards on your GBYTE" /></div>
@@ -94,7 +94,7 @@ export const HowItWorks = () => (<div className="max-w-5xl px-6 mx-auto lg:px-8"
       </div>
 
       <div className="w-full md:w-[50%] space-y-4">
-        <div>Kava distributes 1,000,000 KAVA tokens (about $1m) monthly to all dapps that participate in the <a href="https://www.kava.io/developer-rewards" target="_blank" rel="noopener" className="underline text-kava">Kava Rise program</a>. The program rewards for TVL, and our share of rewards depends on our share in the total <a href="https://defillama.com/chain/Kava" className="underline text-kava" target="_blank" rel="noopener">Kava TVL as tracked by DefiLlama</a>. It varies from month to month.</div>
+      <div>Kava distributes 1,000,000 KAVA tokens (about $1m) monthly to all dapps that participate in the <a href="https://www.kava.io/developer-rewards" target="_blank" rel="noopener" className="underline text-kava" onClick={()=> openExternalPageEvent("APY", "KAVA-RISE")}>Kava Rise program</a>. The program rewards for TVL, and our share of rewards depends on our share in the total <a href="https://defillama.com/chain/Kava" className="underline text-kava" target="_blank" rel="noopener" onClick={()=> openExternalPageEvent("APY", "KAVA-DEFILLAMA")}>Kava TVL as tracked by DefiLlama</a>. It varies from month to month.</div>
         <div>The latest APY from Kava Rise is 7%. That’s what you are expected to earn for holding any tokens other than LINE. For holding LINE, you get a double of that. </div>
         <div>The rewards for holding LINE are based on the current price of LINE which might be different from the token’s price when you borrowed it. While the token is price protected, the rewards are not, however you can always repay the loan and re-borrow more tokens at a new rate if the price of LINE has decreased.</div>
       </div>
@@ -106,8 +106,8 @@ export const HowItWorks = () => (<div className="max-w-5xl px-6 mx-auto lg:px-8"
 
   <div className="flex flex-col-reverse items-center justify-between mt-20 space-x-5 md:flex-row">
     <div className="w-full md:w-[50%] space-y-4">
-      <div>First, <button onClick={() => changeNetwork()} className="underline cursor-pointer text-kava">add Kava</button> to your <a href="https://metamask.io/download" target="_blank" rel="noopener" className="underline text-kava">MetaMask</a>.</div>
-      <div>Then, you’ll need a small amount of KAVA (the native token of Kava) in order to send transactions on the Kava network. You can buy KAVA on Binance and some other exchanges. When withdrawing KAVA to your MetaMask, use this <a href="https://docs.kava.io/docs/ethereum/address_conversion/" target="_blank" className="underline text-kava" rel="noopener">Kava address converter</a> to convert between EVM (your MetaMask) and Cosmos addresses on Kava.</div>
+      <div>First, <button onClick={() => changeNetwork() && openExternalPageEvent("STARTED", "ADD-NETWORK")} className="underline cursor-pointer text-kava">add Kava</button> to your <a href="https://metamask.io/download" target="_blank" rel="noopener" className="underline text-kava" onClick={()=> openExternalPageEvent("STARTED", "DOWNLOAD-METAMASK")}>MetaMask</a>.</div>
+      <div>Then, you’ll need a small amount of KAVA (the native token of Kava) in order to send transactions on the Kava network. You can buy KAVA on Binance and some other exchanges. When withdrawing KAVA to your MetaMask, use this <a href="https://docs.kava.io/docs/ethereum/address_conversion/" target="_blank" className="underline text-kava" rel="noopener" onClick={()=> openExternalPageEvent("STARTED", "KAVA-ADDRESS-CONVERTER")}>Kava address converter</a> to convert between EVM (your MetaMask) and Cosmos addresses on Kava.</div>
     </div>
     <div className="w-full md:w-[50%] mb-5 md:mb-0 flex justify-center">
       <img className="max-w-[250px]" alt="Kava MetaMask" src="/kava-metamask.svg" />

@@ -3,7 +3,7 @@ export const Spin = ({ className }) => (
 		<div className="w-full opacity-30">
 			<div className="flex justify-center">
 				<svg
-					ariaHidden="true"
+					aria-hidden="true"
 					className={`w-12 h-12 text-kava/60 animate-spin fill-kava ${className}`}
 					viewBox="0 0 100 101"
 					fill="none"
