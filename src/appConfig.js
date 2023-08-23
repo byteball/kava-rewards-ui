@@ -18,7 +18,7 @@ export default {
     }
     : {
       chainId: "0x8ae",
-      chainName: "Kava EVM Network",
+      chainName: "Kava",
       nativeCurrency: {
         name: "KAVA",
         symbol: "KAVA",
