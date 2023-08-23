@@ -196,7 +196,7 @@ export const RewardTable = () => {
 							<td className="w-full py-4 pr-3 text-sm font-medium rounded-tl-lg rounded-bl-lg max-w-0 sm:w-auto sm:max-w-none sm:pl-3">
 								<AddressPlaceholder address={wallet.address} />
 								<div className="mt-2 md:hidden">
-									<BalanceDrawer balances={wallet.balances}>
+									<BalanceDrawer address={wallet.address} balances={wallet.balances}>
 										<button className="select-none text-kava hover:text-kava/60">
 											Show balances
 										</button>
@@ -205,7 +205,7 @@ export const RewardTable = () => {
 							</td>
 							<td className="px-3 py-4 pr-0 text-sm md:pr-3">${toLocalString(Number(wallet.reward).toFixed(2))}</td>
 							<td className="hidden px-3 py-4 text-sm md:table-cell">
-								<BalanceDrawer balances={wallet.balances}>
+								<BalanceDrawer address={wallet.address} balances={wallet.balances}>
 									<button className="select-none text-kava hover:text-kava/60">
 										${toLocalString(Number(wallet.total_effective_usd_balance).toFixed(2))}
 									</button>
