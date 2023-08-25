@@ -31,6 +31,7 @@ export const HowItWorks = () => (<div className="max-w-5xl px-6 mx-auto lg:px-8"
       <div className="mt-5 space-y-2 text-white/80">
         <div>This works for any token that is listed on Coingecko and has a bridge to Obyte on <a href="https://counterstake.org" onClick={()=> openExternalPageEvent("OPTION-1", "CS")} target="_blank" rel="noopener" className="underline text-kava">Counterstake</a>. If it doesn’t have a bridge yet, you can <a href="https://counterstake.org/create" onClick={()=> openExternalPageEvent("OPTION-1", "CS-CREATE")}  target="_blank" rel="noopener" className="underline text-kava">add it</a>.</div>
         <div>You would be rewarded for the TVL you create on the Kava side of Counterstake when you bridge the token.</div>
+        <div>You can also just buy Kava tokens (e.g. KAVA, KUSDT, KUSDC) on <a href="https://oswap.io" target="_blank" rel="noopener" onClick={() => openExternalPageEvent("OPTION-1", "OSWAP")} className="underline text-kava">oswap.io</a> and hold them to get rewards.</div>
       </div>
     </div>
   </div>
@@ -62,7 +63,8 @@ export const HowItWorks = () => (<div className="max-w-5xl px-6 mx-auto lg:px-8"
 
       <div className="mt-5 space-y-4 text-white/80">
         <div>This way, you create TVL both in the LINE dapp and in the Counterstake bridge and get a <b>double rate of reward </b> for holding LINE tokens in your Obyte wallet.</div>
-        <div>LINE tokens are price-protected, meaning that you can convert them back to the same amount of GBYTEs (minus fees). You retain your exposure to GBYTE when borrowing LINE. Learn more about LINE’s price protection on its <a href="https://linetoken.org" target="_blank" rel="noopener" onClick={()=> openExternalPageEvent("OPTION-2", "LINE")} className="underline text-kava">website</a>.</div>
+        <div>LINE tokens are price-protected, meaning that you can convert them back to the same amount of GBYTEs (minus fees). You retain your exposure to GBYTE when borrowing LINE. Learn more about LINE’s price protection on its <a href="https://linetoken.org" target="_blank" rel="noopener" onClick={() => openExternalPageEvent("OPTION-2", "LINE")} className="underline text-kava">website</a>.</div>
+        <div>You can also just buy LINE on <a href="https://oswap.io" target="_blank" rel="noopener" onClick={() => openExternalPageEvent("OPTION-2", "OSWAP")} className="underline text-kava">oswap.io</a> and hold to get double rewards, however in this case you don't get price protection.</div>
       </div>
     </div>
     <div className="w-full md:w-[50%] flex justify-center"><img className="max-w-[60%] mb-5 md:mb-0 md:max-w-[90%]" src="/get-increased-rewards-on-your-gbyte.svg" alt="Get increased rewards on your GBYTE" /></div>
