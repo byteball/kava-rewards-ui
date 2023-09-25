@@ -3,6 +3,7 @@ export default {
   EXPLORER_URL: process.env.REACT_APP_TESTNET === "1" ? "https://testnetexplorer.obyte.org" : "https://explorer.obyte.org",
   BACKEND_URL: process.env.REACT_APP_BACKEND_URL,
   OSWAP_STATS_API_URL: process.env.REACT_APP_OSWAP_STATS_API_URL,
+  LLAMA_API_URL: process.env.REACT_APP_LLAMA_API_URL,
   GA_MEASUREMENT_ID: process.env.REACT_APP_GA_MEASUREMENT_ID,
   RPC_META: process.env.REACT_APP_TESTNET === "1"
     ? {
