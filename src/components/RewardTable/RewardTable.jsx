@@ -12,14 +12,15 @@ import {
 } from "components";
 
 import { historyInstance } from "historyInstance";
-import { toLocalString } from "utils";
+import { toLocalString, getTvl } from "utils";
 
 import backend from "services/backend";
 
 const REWARD_RATE = 0.07;
 
-const estimateRewards = (snapshot) => {
-	const totalMonthlyReward = snapshot.total_effective_usd_balance * (REWARD_RATE / 12);
+const estimateRewards = async (snapshot) => {
+	const totalTvl = await getTvl();
+	const totalMonthlyReward = (totalTvl * REWARD_RATE) / 12;
 	const balances = snapshot.balances;
 
 	const assetsByAddress = groupBy(balances, (b) => b.address.toUpperCase());
@@ -38,13 +39,17 @@ const estimateRewards = (snapshot) => {
 				effective_balance,
 				balance,
 				effective_usd_balance,
+				usd_balance: effective_usd_balance / (home_symbol === "LINE" ? 2 : 1),
 				...other
 			});
 		});
 
+		const total_usd_balance = balances.reduce((acc, { usd_balance }) => acc + usd_balance, 0);
+
 		return ({
 			address: walletAddress,
 			total_effective_usd_balance: totalWalletEffectiveUsdBalance,
+			total_usd_balance,
 			balances,
 			share: totalWalletEffectiveUsdBalance / snapshot.total_effective_usd_balance,
 			reward: totalMonthlyReward * totalWalletEffectiveUsdBalance / snapshot.total_effective_usd_balance
@@ -85,7 +90,7 @@ export const RewardTable = () => {
 		result.balances = Object.values(balances);
 
 		return result;
-	}, [data])
+	}, [data]);
 
 	useEffect(() => {
 		if (periods.length > 1) {
@@ -116,8 +121,8 @@ export const RewardTable = () => {
 
 		if (activePeriod) {
 			if (activePeriod === "estimated") {
-				backend.getEstimatedSnapshot().then((snapshot) => {
-					const estimatedData = estimateRewards(snapshot);
+				backend.getEstimatedSnapshot().then(async (snapshot) => {
+					const estimatedData = await estimateRewards(snapshot);
 					setData(estimatedData);
 					setLoading(false);
 					console.log('log: snapshot was loaded');
@@ -126,8 +131,8 @@ export const RewardTable = () => {
 				intervalId = setInterval(() => {
 					console.log('log: update');
 
-					backend.getEstimatedSnapshot().then((snapshot) => {
-						const estimatedData = estimateRewards(snapshot);
+					backend.getEstimatedSnapshot().then(async (snapshot) => {
+						const estimatedData = await estimateRewards(snapshot);
 						setData(estimatedData);
 						setLoading(false);
 					});
@@ -135,8 +140,17 @@ export const RewardTable = () => {
 				}, 60 * 1000);
 
 			} else {
-				backend.getDataByPeriod(activePeriod).then(([data, total]) => {
-					setData(data);
+				backend.getDataByPeriod(activePeriod).then(([data]) => {					
+					const newData = data.map((oldData)=> {
+						const total_usd_balance = oldData.balances.reduce((acc, { effective_usd_balance, symbol }) => acc + (symbol === "LINE" ? effective_usd_balance / 2 : effective_usd_balance), 0);
+
+						return ({
+							...oldData,
+							total_usd_balance
+						})
+					});
+					
+					setData(newData);
 					setLoading(false);
 				});
 			}
@@ -185,7 +199,7 @@ export const RewardTable = () => {
 							scope="col"
 							className="hidden px-3 py-3.5 text-left text-sm font-semibold  lg:table-cell"
 						>
-							Reward share
+							Wallet APY
 						</th>
 					</tr>
 				</thead>
@@ -210,7 +224,7 @@ export const RewardTable = () => {
 										${toLocalString(Number(wallet.total_effective_usd_balance).toFixed(2))}
 									</button>
 								</BalanceDrawer></td>
-							<td className="hidden px-3 py-4 text-sm lg:table-cell ">{toLocalString(Number(wallet.share * 100).toFixed(3))}%</td>
+							<td className="hidden px-3 py-4 text-sm lg:table-cell ">{toLocalString(Number(((1 + (wallet.reward / wallet.total_usd_balance)) ** 12 - 1) * 100).toFixed(2))}%</td>
 						</tr>
 					))}
 

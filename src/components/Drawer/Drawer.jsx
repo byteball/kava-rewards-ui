@@ -28,7 +28,7 @@ export const Drawer = ({ visible, setVisible, children, title = false }) => (<Tr
             leaveFrom="translate-x-0"
             leaveTo="translate-x-full"
           >
-            <Dialog.Panel className="w-screen max-w-2xl pointer-events-auto">
+            <Dialog.Panel className="w-screen max-w-3xl pointer-events-auto">
               <div className="flex flex-col h-full py-6 overflow-y-scroll shadow-xl bg-gray-950 ">
                 <div className="px-4 sm:px-6">
                   <div className="flex items-start justify-between">
