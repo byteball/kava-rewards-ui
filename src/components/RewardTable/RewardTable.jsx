@@ -12,14 +12,15 @@ import {
 } from "components";
 
 import { historyInstance } from "historyInstance";
-import { toLocalString } from "utils";
+import { toLocalString, getEffectiveTvl } from "utils";
 
 import backend from "services/backend";
 
 const REWARD_RATE = 0.07;
 
-const estimateRewards = (snapshot) => {
-	const totalMonthlyReward = snapshot.total_effective_usd_balance * (REWARD_RATE / 12);
+const estimateRewards = async (snapshot) => {
+	const totalEffectiveTvl = await getEffectiveTvl();
+	const totalMonthlyReward = (totalEffectiveTvl * REWARD_RATE) / 12;
 	const balances = snapshot.balances;
 
 	const assetsByAddress = groupBy(balances, (b) => b.address.toUpperCase());
@@ -85,7 +86,7 @@ export const RewardTable = () => {
 		result.balances = Object.values(balances);
 
 		return result;
-	}, [data])
+	}, [data]);
 
 	useEffect(() => {
 		if (periods.length > 1) {
@@ -116,8 +117,8 @@ export const RewardTable = () => {
 
 		if (activePeriod) {
 			if (activePeriod === "estimated") {
-				backend.getEstimatedSnapshot().then((snapshot) => {
-					const estimatedData = estimateRewards(snapshot);
+				backend.getEstimatedSnapshot().then(async (snapshot) => {
+					const estimatedData = await estimateRewards(snapshot);
 					setData(estimatedData);
 					setLoading(false);
 					console.log('log: snapshot was loaded');
@@ -126,8 +127,8 @@ export const RewardTable = () => {
 				intervalId = setInterval(() => {
 					console.log('log: update');
 
-					backend.getEstimatedSnapshot().then((snapshot) => {
-						const estimatedData = estimateRewards(snapshot);
+					backend.getEstimatedSnapshot().then(async (snapshot) => {
+						const estimatedData = await estimateRewards(snapshot);
 						setData(estimatedData);
 						setLoading(false);
 					});
