@@ -39,13 +39,17 @@ const estimateRewards = async (snapshot) => {
 				effective_balance,
 				balance,
 				effective_usd_balance,
+				usd_balance: effective_usd_balance / (home_symbol === "LINE" ? 2 : 1),
 				...other
 			});
 		});
 
+		const total_usd_balance = balances.reduce((acc, { usd_balance }) => acc + usd_balance, 0);
+
 		return ({
 			address: walletAddress,
 			total_effective_usd_balance: totalWalletEffectiveUsdBalance,
+			total_usd_balance,
 			balances,
 			share: totalWalletEffectiveUsdBalance / snapshot.total_effective_usd_balance,
 			reward: totalMonthlyReward * totalWalletEffectiveUsdBalance / snapshot.total_effective_usd_balance
@@ -136,8 +140,17 @@ export const RewardTable = () => {
 				}, 60 * 1000);
 
 			} else {
-				backend.getDataByPeriod(activePeriod).then(([data, total]) => {
-					setData(data);
+				backend.getDataByPeriod(activePeriod).then(([data]) => {					
+					const newData = data.map((oldData)=> {
+						const total_usd_balance = oldData.balances.reduce((acc, { effective_usd_balance, symbol }) => acc + (symbol === "LINE" ? effective_usd_balance / 2 : effective_usd_balance), 0);
+
+						return ({
+							...oldData,
+							total_usd_balance
+						})
+					});
+					
+					setData(newData);
 					setLoading(false);
 				});
 			}
@@ -186,7 +199,7 @@ export const RewardTable = () => {
 							scope="col"
 							className="hidden px-3 py-3.5 text-left text-sm font-semibold  lg:table-cell"
 						>
-							Reward share
+							Wallet APY
 						</th>
 					</tr>
 				</thead>
@@ -211,7 +224,7 @@ export const RewardTable = () => {
 										${toLocalString(Number(wallet.total_effective_usd_balance).toFixed(2))}
 									</button>
 								</BalanceDrawer></td>
-							<td className="hidden px-3 py-4 text-sm lg:table-cell ">{toLocalString(Number(wallet.share * 100).toFixed(3))}%</td>
+							<td className="hidden px-3 py-4 text-sm lg:table-cell ">{toLocalString(Number(((1 + (wallet.reward / wallet.total_usd_balance)) ** 12 - 1) * 100).toFixed(2))}%</td>
 						</tr>
 					))}
 
