@@ -19,8 +19,8 @@ import backend from "services/backend";
 const REWARD_RATE = 0.07;
 
 const estimateRewards = async (snapshot) => {
-	const totalEffectiveTvl = await getTvl();
-	const totalMonthlyReward = (totalEffectiveTvl * REWARD_RATE) / 12;
+	const totalTvl = await getTvl();
+	const totalMonthlyReward = (totalTvl * REWARD_RATE) / 12;
 	const balances = snapshot.balances;
 
 	const assetsByAddress = groupBy(balances, (b) => b.address.toUpperCase());
