@@ -12,14 +12,14 @@ import {
 } from "components";
 
 import { historyInstance } from "historyInstance";
-import { toLocalString, getEffectiveTvl } from "utils";
+import { toLocalString, getTvl } from "utils";
 
 import backend from "services/backend";
 
 const REWARD_RATE = 0.07;
 
 const estimateRewards = async (snapshot) => {
-	const totalEffectiveTvl = await getEffectiveTvl();
+	const totalEffectiveTvl = await getTvl();
 	const totalMonthlyReward = (totalEffectiveTvl * REWARD_RATE) / 12;
 	const balances = snapshot.balances;
 

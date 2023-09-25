@@ -1,6 +1,6 @@
 import appConfig from "appConfig";
 
-export const getEffectiveTvl = async () => {
+export const getTvl = async () => {
   const [
     csData,
     lineTvl
