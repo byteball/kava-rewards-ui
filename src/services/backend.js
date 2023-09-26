@@ -12,6 +12,18 @@ class Backend {
 			method: "GET",
 			cache: "no-cache"
 		}).then(r => r.json()).then(r => r.data);
+
+		// const avgBalances = await fetch(`${this.endpointUrl}/average_balances/latest`, {
+		// 	method: "GET",
+		// 	cache: "no-cache"
+		// }).then(r => r.json()).then(r => r.data);
+
+		// const totalEffectiveUsdBalance = avgBalances.reduce((acc, { effective_usd_balance }) => acc + effective_usd_balance, 0);
+
+		// return ({
+		// 	balances: avgBalances,
+		// 	total_effective_usd_balance: totalEffectiveUsdBalance
+		// });
 	}
 
 	async getPeriods() {

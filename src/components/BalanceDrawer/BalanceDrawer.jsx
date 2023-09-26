@@ -6,10 +6,12 @@ import { toLocalString } from "utils";
 export const BalanceDrawer = ({ children, balances, address }) => {
   const [visible, setVisible] = useState(false);
 
+  const totalEffectiveUsdBalance = balances.reduce((acc, { effective_usd_balance }) => acc + effective_usd_balance, 0);
+  
   return <>
     <span onClick={() => setVisible(true)}>{children}</span>
 
-    <Drawer visible={visible} setVisible={setVisible} title="Balances">
+    <Drawer visible={visible} setVisible={setVisible} title="Average balances">
       <div className="py-5">
         {address ? <div className="mb-3">
           Wallet address: <AddressPlaceholder full address={address} />
@@ -33,6 +35,13 @@ export const BalanceDrawer = ({ children, balances, address }) => {
               <td><span className="inline text-white md:hidden">Effective balance: </span>{toLocalString(Number(effective_balance).toFixed(6))}</td>
               <td><span className="inline text-white md:hidden">Effective USD balance: </span>{toLocalString(Number(effective_usd_balance).toFixed(2))}</td>
             </tr>)}
+            <tr key='total' className="flex flex-col py-3 border-t-2 border-t-primary-gray rounded-xl md:py-0 md:table-row">
+              <td><span className="hidden md:inline">Total</span></td>
+              <td />
+              <td />
+              <td />
+              <td><td><span className="inline text-white md:hidden">Total effective USD balance: </span>{toLocalString(Number(totalEffectiveUsdBalance).toFixed(2))}</td></td>
+            </tr>
           </tbody>
         </table>
       </div>
