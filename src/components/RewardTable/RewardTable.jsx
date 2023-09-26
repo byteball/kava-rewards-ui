@@ -52,7 +52,7 @@ const estimateRewards = async (snapshot) => {
 		return ({
 			address: walletAddress,
 			total_effective_usd_balance: totalWalletEffectiveUsdBalance,
-			total_usd_balance: total_usd_balance,
+			total_usd_balance,
 			balances,
 			share: totalWalletEffectiveUsdBalance / snapshot.total_effective_usd_balance,
 			reward: ((totalMonthlyReward * totalWalletEffectiveUsdBalance / snapshot.total_effective_usd_balance)) * 0.9
