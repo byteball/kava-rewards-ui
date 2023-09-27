@@ -34,7 +34,7 @@ const estimateRewards = async (snapshot) => {
 		const balances = [];
 
 		assets.forEach(({ effective_usd_balance, home_asset, home_symbol, effective_balance, balance, ...other }) => {
-			totalWalletEffectiveUsdBalance += effective_usd_balance / divider;
+			totalWalletEffectiveUsdBalance += effective_usd_balance;
 
 			balances.push({
 				asset: home_asset,
@@ -42,7 +42,7 @@ const estimateRewards = async (snapshot) => {
 				effective_balance: effective_balance / divider,
 				balance: balance / divider,
 				effective_usd_balance: effective_usd_balance / divider,
-				usd_balance: effective_usd_balance / (home_symbol === "LINE" ? 2 : 1) / divider,
+				usd_balance: effective_usd_balance / ((home_symbol === "LINE" ? 2 : 1) * divider),
 				...other
 			});
 		});
@@ -51,11 +51,11 @@ const estimateRewards = async (snapshot) => {
 
 		return ({
 			address: walletAddress,
-			total_effective_usd_balance: totalWalletEffectiveUsdBalance,
+			total_effective_usd_balance: totalWalletEffectiveUsdBalance / divider,
 			total_usd_balance,
 			balances,
 			share: totalWalletEffectiveUsdBalance / snapshot.total_effective_usd_balance,
-			reward: ((totalMonthlyReward * totalWalletEffectiveUsdBalance / snapshot.total_effective_usd_balance)) * 0.9
+			reward: (((totalMonthlyReward * (totalWalletEffectiveUsdBalance / snapshot.total_effective_usd_balance))) / divider) * 0.9 
 		});
 	}).sort((a, b) => b.total_effective_usd_balance - a.total_effective_usd_balance);
 }
@@ -77,15 +77,16 @@ export const RewardTable = () => {
 		const result = { reward: 0, effective_balance: 0, balances: [], total_effective_usd_balance: 0 };
 		const balances = {};
 
-		data.forEach(({ reward: walletRewards, total_effective_usd_balance, balances: walletBalances }) => {
+		data.forEach(({ reward: walletRewards, balances: walletBalances }) => {
 			result.reward += walletRewards;
-			result.total_effective_usd_balance += total_effective_usd_balance;
 
-			walletBalances.forEach(({ asset, symbol, balance, effective_balance }) => {
+			walletBalances.forEach(({ asset, symbol, balance, effective_balance, effective_usd_balance }) => {
+				result.total_effective_usd_balance += effective_usd_balance;
+				
 				if (asset in balances) {
-					balances[asset] = { ...balances[asset], balance: balances[asset].balance + balance, effective_balance: balances[asset].effective_balance + effective_balance, effective_usd_balance: balances[asset].effective_usd_balance + total_effective_usd_balance  }
+					balances[asset] = { ...balances[asset], balance: balances[asset].balance + balance, effective_balance: balances[asset].effective_balance + effective_balance, effective_usd_balance: balances[asset].effective_usd_balance + effective_usd_balance  }
 				} else {
-					balances[asset] = { asset, symbol, balance, effective_balance, effective_usd_balance: total_effective_usd_balance }
+					balances[asset] = { asset, symbol, balance, effective_balance, effective_usd_balance: effective_usd_balance }
 				}
 			});
 		});
