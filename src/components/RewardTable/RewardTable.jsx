@@ -14,17 +14,16 @@ import {
 import { historyInstance } from "historyInstance";
 import { toLocalString, getTvl } from "utils";
 
-import backend from "services/backend";
+import backend, { getMonthName } from "services/backend";
 
 const REWARD_RATE = 0.07;
 
-const estimateRewards = async (snapshot) => {
+const estimateRewards = async (snapshot, period) => {
 	const totalTvl = await getTvl();
 	const totalMonthlyReward = (totalTvl * REWARD_RATE) / 12;
 	const balances = snapshot.balances;
 
-	const date = new Date();
-	const divider = date.getFullYear() === 2023 && date.getMonth() + 1 === 9 ? 3 : 1; // because TVL tracking will start from 2023-09-20
+	const divider = period === "2023-09" ? 3 : 1; // because TVL tracking will start from 2023-09-20
 
 	const assetsByAddress = groupBy(balances, (b) => b.address.toUpperCase());
 
@@ -55,7 +54,7 @@ const estimateRewards = async (snapshot) => {
 			total_usd_balance,
 			balances,
 			share: totalWalletEffectiveUsdBalance / snapshot.total_effective_usd_balance,
-			reward: (((totalMonthlyReward * (totalWalletEffectiveUsdBalance / snapshot.total_effective_usd_balance))) / divider) * 0.9 
+			reward: (((totalMonthlyReward * (totalWalletEffectiveUsdBalance / snapshot.total_effective_usd_balance))) / divider) * 0.9
 		});
 	}).sort((a, b) => b.total_effective_usd_balance - a.total_effective_usd_balance);
 }
@@ -70,7 +69,7 @@ export const RewardTable = () => {
 
 	const handleChangePeriod = (v) => {
 		setActivePeriod(v);
-		historyInstance.replace(`/${v}`);
+		historyInstance.replace(`/${v.value}`);
 	}
 
 	const total = useMemo(() => {
@@ -82,9 +81,9 @@ export const RewardTable = () => {
 
 			walletBalances.forEach(({ asset, symbol, balance, effective_balance, effective_usd_balance }) => {
 				result.total_effective_usd_balance += effective_usd_balance;
-				
+
 				if (asset in balances) {
-					balances[asset] = { ...balances[asset], balance: balances[asset].balance + balance, effective_balance: balances[asset].effective_balance + effective_balance, effective_usd_balance: balances[asset].effective_usd_balance + effective_usd_balance  }
+					balances[asset] = { ...balances[asset], balance: balances[asset].balance + balance, effective_balance: balances[asset].effective_balance + effective_balance, effective_usd_balance: balances[asset].effective_usd_balance + effective_usd_balance }
 				} else {
 					balances[asset] = { asset, symbol, balance, effective_balance, effective_usd_balance: effective_usd_balance }
 				}
@@ -97,19 +96,30 @@ export const RewardTable = () => {
 	}, [data]);
 
 	useEffect(() => {
+		const date = new Date();
+
+		const year = date.getFullYear();
+		const month = date.getMonth() + 1;
+
+		const latestPeriod = {
+			title: `${getMonthName(month)} ${year} (estimated)`,
+			value: 'latest',
+			estimated: true
+		}
+
 		if (periods.length > 1) {
 			if (periodInParams && periodInParams !== activePeriod) {
 				if (periods.value.find((p) => p.value === periodInParams)) {
 					setActivePeriod(periodInParams);
 				} else {
-					console.log("log: no that period, redirect to estimated period")
-					handleChangePeriod('estimated');
+					console.log("log: no that period, redirect to latest period")
+					handleChangePeriod(latestPeriod);
 				}
 			} else if (!periodInParams) {
-				setActivePeriod('estimated');
+				setActivePeriod(latestPeriod);
 			}
 		} else if (periods.loaded) {
-			setActivePeriod('estimated');
+			setActivePeriod(latestPeriod);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [periods]);
@@ -124,9 +134,9 @@ export const RewardTable = () => {
 		let intervalId;
 
 		if (activePeriod) {
-			if (activePeriod === "estimated") {
-				backend.getEstimatedSnapshot().then(async (snapshot) => {
-					const estimatedData = await estimateRewards(snapshot);
+			if (activePeriod.estimated) {
+				backend.getEstimatedSnapshot(activePeriod.value).then(async (snapshot) => {
+					const estimatedData = await estimateRewards(snapshot,  activePeriod.value);
 					setData(estimatedData);
 					setLoading(false);
 					console.log('log: snapshot was loaded');
@@ -135,8 +145,8 @@ export const RewardTable = () => {
 				intervalId = setInterval(() => {
 					console.log('log: update');
 
-					backend.getEstimatedSnapshot().then(async (snapshot) => {
-						const estimatedData = await estimateRewards(snapshot);
+					backend.getEstimatedSnapshot(activePeriod.value).then(async (snapshot) => {
+						const estimatedData = await estimateRewards(snapshot, activePeriod.value);
 						setData(estimatedData);
 						setLoading(false);
 					});
@@ -144,8 +154,8 @@ export const RewardTable = () => {
 				}, 60 * 1000);
 
 			} else {
-				backend.getDataByPeriod(activePeriod).then(([data]) => {					
-					const newData = data.map((oldData)=> {
+				backend.getDataByPeriod(activePeriod).then(([data]) => {
+					const newData = data.map((oldData) => {
 						const total_usd_balance = oldData.balances.reduce((acc, { effective_usd_balance, symbol }) => acc + (symbol === "LINE" ? effective_usd_balance / 2 : effective_usd_balance), 0);
 
 						return ({
@@ -153,7 +163,7 @@ export const RewardTable = () => {
 							total_usd_balance
 						})
 					});
-					
+
 					setData(newData);
 					setLoading(false);
 				});
@@ -203,7 +213,7 @@ export const RewardTable = () => {
 							scope="col"
 							className="hidden px-3 py-3.5 text-left text-sm font-semibold  lg:table-cell"
 						>
-							{activePeriod === 'estimated' ? 'Est.' : ''} Wallet APY 
+							{activePeriod === 'estimated' ? 'Est.' : ''} Wallet APY
 						</th>
 					</tr>
 				</thead>
