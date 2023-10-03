@@ -7,29 +7,27 @@ class Backend {
 		this.endpointUrl = endpointUrl;
 	}
 
-	async getEstimatedSnapshot() {
-		return fetch(`${this.endpointUrl}/snapshots/latest`, {
+	async getEstimatedSnapshot(period) {
+		const avgBalancesOrSnapshot = await fetch(`${this.endpointUrl}/${period === '2023-09' ? 'snapshots' : 'average_balances'}/${period === '2023-09' ? '1900' : period}`, { //period === '2023-09' ? 'snapshots' :
 			method: "GET",
 			cache: "no-cache"
 		}).then(r => r.json()).then(r => r.data);
+		
+		if (period === "2023-09") return avgBalancesOrSnapshot;
 
-		// const avgBalances = await fetch(`${this.endpointUrl}/average_balances/latest`, {
-		// 	method: "GET",
-		// 	cache: "no-cache"
-		// }).then(r => r.json()).then(r => r.data);
+		const totalEffectiveUsdBalance = avgBalancesOrSnapshot.reduce((acc, { effective_usd_balance }) => acc + effective_usd_balance, 0);
 
-		// const totalEffectiveUsdBalance = avgBalances.reduce((acc, { effective_usd_balance }) => acc + effective_usd_balance, 0);
-
-		// return ({
-		// 	balances: avgBalances,
-		// 	total_effective_usd_balance: totalEffectiveUsdBalance
-		// });
+		return ({
+			balances: avgBalancesOrSnapshot,
+			total_effective_usd_balance: totalEffectiveUsdBalance
+		});
 	}
 
 	async getPeriods() {
 		const date = new Date();
+		const startPeriod = "2023-09";
 
-		const defaultPeriods = [{ value: 'estimated', title: `${getMonthName(date.getMonth() + 1)} (estimated)` }];
+		const defaultPeriods = [{ value: 'latest', title: `${getMonthName(date.getMonth() + 1)} ${date.getFullYear()} (estimated)`, estimated: true }];
 
 		const periodsData = await fetch(`${this.endpointUrl}/periods`, {
 			method: "GET",
@@ -42,11 +40,34 @@ class Backend {
 
 			return ({
 				value: period,
-				title: `${getMonthName(month)} ${year}`
+				title: `${getMonthName(month)} ${year}`,
+				estimated: false
 			})
 		});
 
-		return [...defaultPeriods, ...loadedPeriods];
+		const estimatedPeriods = [];
+		const startDate = new Date(startPeriod);
+
+		while (true) {
+			const year = startDate.getFullYear();
+			const month = startDate.getMonth() + 1;
+
+			const period = `${year}-${month.toString().padStart(2, '0')}`;
+
+			if (year > date.getFullYear() || (year === date.getFullYear() && month > date.getMonth())) break;
+
+			if (!loadedPeriods.find(({ value }) => value === period)) {
+				estimatedPeriods.unshift({
+					value: `${year}-${month.toString().padStart(2, '0')}`,
+					title: `${getMonthName(month)} ${year} (estimated)`,
+					estimated: true
+				});
+			}
+
+			startDate.setMonth(startDate.getMonth() + 1);
+		}
+
+		return [...defaultPeriods, ...loadedPeriods, ...estimatedPeriods];
 	}
 
 	async getAvgBalancesByPeriod(period) {
@@ -103,7 +124,7 @@ class Backend {
 	}
 }
 
-const getMonthName = (num) => {
+export const getMonthName = (num) => {
 	const names = ["January", "February", "March", "April", "May", "June",
 		"July", "August", "September", "October", "November", "December"];
 
