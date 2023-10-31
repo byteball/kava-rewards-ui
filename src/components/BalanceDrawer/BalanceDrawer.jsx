@@ -3,7 +3,7 @@ import { useState } from "react";
 import { AddressPlaceholder, Drawer } from "components";
 import { toLocalString } from "utils";
 
-export const BalanceDrawer = ({ children, balances, address }) => {
+export const BalanceDrawer = ({ children, balances = [], address }) => {
   const [visible, setVisible] = useState(false);
 
   const totalEffectiveUsdBalance = balances.reduce((acc, { effective_usd_balance }) => acc + effective_usd_balance, 0);
