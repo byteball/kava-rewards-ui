@@ -91,7 +91,28 @@ class Backend {
 	}
 
 	async getDataByPeriod(period) {
-		const avgBalances = await this.getAvgBalancesByPeriod(period);
+		let avgBalances;
+
+		if (period === "2023-09") {
+			const avgBalances1 = await this.getAvgBalancesByPeriod(period).then((b) => b.map((data) => ({
+				...data,
+				balance: data.balance * (1 / 4),
+				effective_balance: data.effective_balance * (1 / 4),
+				effective_usd_balance: data.effective_usd_balance * (1 / 4)
+			})));
+
+			const avgBalances2 = await this.getAvgBalancesByPeriod("2023-10").then((b) => b.map((data) => ({
+				...data,
+				balance: data.balance * (3 / 4),
+				effective_balance: data.effective_balance * (3 / 4),
+				effective_usd_balance: data.effective_usd_balance * (3 / 4)
+			})));
+
+			avgBalances = [...avgBalances1, ...avgBalances2];
+		} else {
+			avgBalances = await this.getAvgBalancesByPeriod(period);
+		}
+
 		const avgBalancesByAddress = groupBy(avgBalances, (b) => b.address.toUpperCase());
 		const gbytePrice = await this.getGbytePrice();
 		const effectiveBalances = {};
@@ -104,13 +125,21 @@ class Backend {
 			assets.forEach(({ effective_usd_balance, home_asset, home_symbol, effective_balance, balance }) => {
 				effectiveUSDBalanceByAddress[walletAddress] += effective_usd_balance;
 
-				effectiveBalances[walletAddress].push({
-					asset: home_asset,
-					symbol: home_symbol,
-					effective_balance,
-					balance,
-					effective_usd_balance
-				});
+				const index = effectiveBalances[walletAddress].findIndex(({ asset }) => asset === home_asset);
+
+				if (index >= 0) {
+					effectiveBalances[walletAddress][index].effective_balance += effective_balance;
+					effectiveBalances[walletAddress][index].balance += balance;
+					effectiveBalances[walletAddress][index].effective_usd_balance += effective_usd_balance;
+				} else {
+					effectiveBalances[walletAddress].push({
+						asset: home_asset,
+						symbol: home_symbol,
+						effective_balance,
+						balance,
+						effective_usd_balance
+					});
+				}
 			});
 		});
 
@@ -119,7 +148,8 @@ class Backend {
 			cache: "no-cache"
 		}).then(r => r.json()).then(r => r.data).then(async (data) => { // for test [{ address: "KUNNTFAD3G55IWXSNKTDRKH222E4DF7R", share: 0.094, reward: 1e9 }]
 			const total = [];
-			return [data.map(({ reward, ...row }) => ({ ...row, reward: (reward / 1e9) * gbytePrice, total_effective_usd_balance: effectiveUSDBalanceByAddress[row.address], effective_balances: effectiveBalances[row.address] })), total];
+
+			return [data.rewards.map(({ reward, ...row }) => ({ ...row, reward: (reward / 1e9) * gbytePrice, total_effective_usd_balance: effectiveUSDBalanceByAddress[row.address], effective_balances: effectiveBalances[row.address] })), total];
 		});
 	}
 }

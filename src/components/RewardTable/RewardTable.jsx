@@ -30,12 +30,12 @@ const estimateRewards = async (snapshot, period) => {
 	return Object.entries(assetsByAddress).map(([walletAddress, assets]) => {
 
 		let totalWalletEffectiveUsdBalance = 0;
-		const balances = [];
+		const effective_balances = [];
 
 		assets.forEach(({ effective_usd_balance, home_asset, home_symbol, effective_balance, balance, ...other }) => {
 			totalWalletEffectiveUsdBalance += effective_usd_balance;
 
-			balances.push({
+			effective_balances.push({
 				asset: home_asset,
 				symbol: home_symbol,
 				effective_balance: effective_balance / divider,
@@ -46,13 +46,13 @@ const estimateRewards = async (snapshot, period) => {
 			});
 		});
 
-		const total_usd_balance = balances.reduce((acc, { usd_balance }) => acc + usd_balance, 0);
+		const total_usd_balance = effective_balances.reduce((acc, { usd_balance }) => acc + usd_balance, 0);
 
 		return ({
 			address: walletAddress,
 			total_effective_usd_balance: totalWalletEffectiveUsdBalance / divider,
 			total_usd_balance,
-			balances,
+			effective_balances,
 			share: totalWalletEffectiveUsdBalance / snapshot.total_effective_usd_balance,
 			reward: (((totalMonthlyReward * (totalWalletEffectiveUsdBalance / snapshot.total_effective_usd_balance))) / divider) * 0.9
 		});
@@ -76,7 +76,7 @@ export const RewardTable = () => {
 		const result = { reward: 0, effective_balance: 0, balances: [], total_effective_usd_balance: 0 };
 		const balances = {};
 
-		data.forEach(({ reward: walletRewards, balances: walletBalances }) => {
+		data.forEach(({ reward: walletRewards, effective_balances: walletBalances }) => {
 			result.reward += walletRewards;
 
 			walletBalances.forEach(({ asset, symbol, balance, effective_balance, effective_usd_balance }) => {
@@ -107,10 +107,10 @@ export const RewardTable = () => {
 			estimated: true
 		}
 
-		if (periods.length > 1) {
+		if (periods.value.length > 1) {
 			if (periodInParams && periodInParams !== activePeriod) {
 				if (periods.value.find((p) => p.value === periodInParams)) {
-					setActivePeriod(periodInParams);
+					setActivePeriod(periods.value.find((p) => p.value === periodInParams));
 				} else {
 					console.log("log: no that period, redirect to latest period")
 					handleChangePeriod(latestPeriod);
@@ -136,7 +136,7 @@ export const RewardTable = () => {
 		if (activePeriod) {
 			if (activePeriod.estimated) {
 				backend.getEstimatedSnapshot(activePeriod.value).then(async (snapshot) => {
-					const estimatedData = await estimateRewards(snapshot,  activePeriod.value);
+					const estimatedData = await estimateRewards(snapshot, activePeriod.value);
 					setData(estimatedData);
 					setLoading(false);
 					console.log('log: snapshot was loaded');
@@ -154,9 +154,9 @@ export const RewardTable = () => {
 				}, 60 * 1000);
 
 			} else {
-				backend.getDataByPeriod(activePeriod).then(([data]) => {
-					const newData = data.map((oldData) => {
-						const total_usd_balance = oldData.balances.reduce((acc, { effective_usd_balance, symbol }) => acc + (symbol === "LINE" ? effective_usd_balance / 2 : effective_usd_balance), 0);
+				backend.getDataByPeriod(activePeriod.value).then(([data]) => {
+					const newData = data.sort((a, b) => b.reward - a.reward).filter((d) => d.effective_balances).map((oldData) => {
+						const total_usd_balance = oldData.effective_balances?.reduce((acc, { effective_usd_balance, symbol }) => acc + (symbol === "LINE" ? effective_usd_balance / 2 : effective_usd_balance), 0) || 0;
 
 						return ({
 							...oldData,
@@ -224,7 +224,7 @@ export const RewardTable = () => {
 							<td className="w-full py-4 pr-3 text-sm font-medium rounded-tl-lg rounded-bl-lg max-w-0 sm:w-auto sm:max-w-none sm:pl-3">
 								<AddressPlaceholder address={wallet.address} />
 								<div className="mt-2 md:hidden">
-									<BalanceDrawer address={wallet.address} balances={wallet.balances}>
+									<BalanceDrawer address={wallet.address} balances={wallet.effective_balances}>
 										<button className="select-none text-kava hover:text-kava/60">
 											Show balances
 										</button>
@@ -233,12 +233,12 @@ export const RewardTable = () => {
 							</td>
 							<td className="px-3 py-4 pr-0 text-sm md:pr-3">${toLocalString(Number(wallet.reward).toFixed(2))}</td>
 							<td className="hidden px-3 py-4 text-sm md:table-cell">
-								<BalanceDrawer address={wallet.address} balances={wallet.balances}>
+								<BalanceDrawer address={wallet.address} balances={wallet.effective_balances}>
 									<button className="select-none text-kava hover:text-kava/60">
 										${toLocalString(Number(wallet.total_effective_usd_balance).toFixed(2))}
 									</button>
 								</BalanceDrawer></td>
-							<td className="hidden px-3 py-4 text-sm lg:table-cell ">{toLocalString(Number(((1 + (wallet.reward / wallet.total_usd_balance)) ** 12 - 1) * 100).toFixed(2))}%</td>
+							<td className="hidden px-3 py-4 text-sm lg:table-cell ">{toLocalString(Number(((1 + (((activePeriod?.value === "2023-09" ? 3 : 1) * wallet.reward) / wallet.total_usd_balance)) ** 12 - 1) * 100).toFixed(2))}%</td>
 						</tr>
 					))}
 
