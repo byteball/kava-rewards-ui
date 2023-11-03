@@ -12,7 +12,7 @@ class Backend {
 			method: "GET",
 			cache: "no-cache"
 		}).then(r => r.json()).then(r => r.data);
-		
+
 		if (period === "2023-09") return avgBalancesOrSnapshot;
 
 		const totalEffectiveUsdBalance = avgBalancesOrSnapshot.reduce((acc, { effective_usd_balance }) => acc + effective_usd_balance, 0);
@@ -25,7 +25,7 @@ class Backend {
 
 	async getPeriods() {
 		const date = new Date();
-		const startPeriod = "2023-09";
+		const startPeriod = "2023-09-01";
 
 		const defaultPeriods = [{ value: 'latest', title: `${getMonthName(date.getMonth() + 1)} ${date.getFullYear()} (estimated)`, estimated: true }];
 
@@ -34,7 +34,6 @@ class Backend {
 			cache: "no-cache"
 		}).then(r => r.json()).then(r => r.data);
 
-		// [...periodsData, { period: '2023-05' }] for test
 		const loadedPeriods = periodsData.map(({ period }) => {
 			const [year, month] = period.split("-");
 
@@ -67,16 +66,16 @@ class Backend {
 			startDate.setMonth(startDate.getMonth() + 1);
 		}
 
-		return [...defaultPeriods, ...loadedPeriods, ...estimatedPeriods];
+		return [...loadedPeriods, ...estimatedPeriods, ...defaultPeriods]
+			.sort((a, b) => {
+				if (a.value === 'latest') return -1;
+				if (b.value === 'latest') return 1;
+
+				return new Date(`${b.value}-01`).getTime() - new Date(`${a.value}-01`).getTime();
+			});
 	}
 
 	async getAvgBalancesByPeriod(period) {
-		// for test (remove it)
-		// return fetch(`${this.endpointUrl}/snapshots/latest`, {
-		// 	method: "GET",
-		// 	cache: "no-cache"
-		// }).then(r => r.json()).then(r => r.data.balances);
-
 		return fetch(`${this.endpointUrl}/average_balances/${period}`, {
 			method: "GET",
 			cache: "no-cache"
