@@ -16,7 +16,7 @@ import { toLocalString, getTvl } from "utils";
 
 import backend, { getMonthName } from "services/backend";
 
-const REWARD_RATE = 0.07;
+const REWARD_RATE = 0.05;
 
 const estimateRewards = async (snapshot, period) => {
 	const totalTvl = await getTvl();

@@ -97,7 +97,7 @@ export const HowItWorks = () => (<div className="max-w-5xl px-6 mx-auto lg:px-8"
 
       <div className="w-full md:w-[50%] space-y-4">
       <div>Kava distributes 1,000,000 KAVA tokens (about $1m) monthly to all dapps that participate in the <a href="https://www.kava.io/developer-rewards" target="_blank" rel="noopener nofollow" className="underline text-kava" onClick={()=> openExternalPageEvent("APY", "KAVA-RISE")}>Kava Rise program</a>. The program rewards for TVL, and our share of rewards depends on our share in the total <a href="https://defillama.com/chain/Kava" className="underline text-kava" target="_blank" rel="noopener nofollow" onClick={()=> openExternalPageEvent("APY", "KAVA-DEFILLAMA")}>Kava TVL as tracked by DefiLlama</a>. It varies from month to month.</div>
-        <div>The latest APY from Kava Rise is 7%. That’s what you are expected to earn for holding any tokens other than LINE. For holding LINE, you get a double of that. </div>
+        <div>The latest APY from Kava Rise is 5%. That’s what you are expected to earn for holding any tokens other than LINE. For holding LINE, you get a double of that. </div>
         <div>The rewards for holding LINE are based on the current price of LINE which might be different from the token’s price when you borrowed it. While the token is price protected, the rewards are not, however you can always repay the loan and re-borrow more tokens at a new rate if the price of LINE has decreased.</div>
       </div>
     </div>
