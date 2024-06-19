@@ -12,15 +12,25 @@ import {
 } from "components";
 
 import { historyInstance } from "historyInstance";
-import { toLocalString, getTvl } from "utils";
+import { toLocalString, getTvlShare } from "utils";
 
 import backend, { getMonthName } from "services/backend";
 
-const REWARD_RATE = 0.05;
+const MONTHLY_TOTAL_REWARDS_IN_KAVA = 1_100_000;
 
 const estimateRewards = async (snapshot, period) => {
-	const totalTvl = await getTvl();
-	const totalMonthlyReward = (totalTvl * REWARD_RATE) / 12;
+	const tvlShare = await getTvlShare(period);
+
+	const kavaPrice = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=kava&vs_currencies=usd', {
+		headers: {
+			"Access-Control-Allow-Origin": "*",
+			"Access-Control-Allow-Methods": "GET, OPTIONS"
+		}
+	}).then((res) => res.json()).then((data) => data.kava.usd);
+
+	const totalRewardsInKava = MONTHLY_TOTAL_REWARDS_IN_KAVA * tvlShare;
+
+	const totalMonthlyReward = kavaPrice * totalRewardsInKava;
 	const balances = snapshot.balances;
 
 	const divider = period === "2023-09" ? 3 : 1; // because TVL tracking will start from 2023-09-20
