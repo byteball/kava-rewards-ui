@@ -12,7 +12,7 @@ import {
 } from "components";
 
 import { historyInstance } from "historyInstance";
-import { toLocalString, getTvlShare } from "utils";
+import { toLocalString, getTvlShare, getKavaPrice } from "utils";
 
 import backend, { getMonthName } from "services/backend";
 
@@ -21,12 +21,7 @@ const MONTHLY_TOTAL_REWARDS_IN_KAVA = 1_100_000;
 const estimateRewards = async (snapshot, period) => {
 	const tvlShare = await getTvlShare(period);
 
-	const kavaPrice = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=kava&vs_currencies=usd', {
-		headers: {
-			"Access-Control-Allow-Origin": "*",
-			"Access-Control-Allow-Methods": "GET, OPTIONS"
-		}
-	}).then((res) => res.json()).then((data) => data.kava.usd);
+	const kavaPrice = await getKavaPrice();
 
 	const totalRewardsInKava = MONTHLY_TOTAL_REWARDS_IN_KAVA * tvlShare;
 
