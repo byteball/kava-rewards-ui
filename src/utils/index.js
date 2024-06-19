@@ -1,4 +1,5 @@
 export { toLocalString } from "./toLocalString";
 export { changeNetwork } from "./changeNetwork";
 export { openExternalPageEvent } from "./openExternalPageEvent";
-export { getTvl } from "./getTvl";
+export { getTvlShare } from "./getTvlShare";
+export { getKavaPrice } from "./getKavaPrice";

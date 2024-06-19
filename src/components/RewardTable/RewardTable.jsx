@@ -12,15 +12,20 @@ import {
 } from "components";
 
 import { historyInstance } from "historyInstance";
-import { toLocalString, getTvl } from "utils";
+import { toLocalString, getTvlShare, getKavaPrice } from "utils";
 
 import backend, { getMonthName } from "services/backend";
 
-const REWARD_RATE = 0.05;
+const MONTHLY_TOTAL_REWARDS_IN_KAVA = 1_100_000;
 
 const estimateRewards = async (snapshot, period) => {
-	const totalTvl = await getTvl();
-	const totalMonthlyReward = (totalTvl * REWARD_RATE) / 12;
+	const tvlShare = await getTvlShare(period);
+
+	const kavaPrice = await getKavaPrice();
+
+	const totalRewardsInKava = MONTHLY_TOTAL_REWARDS_IN_KAVA * tvlShare;
+
+	const totalMonthlyReward = kavaPrice * totalRewardsInKava;
 	const balances = snapshot.balances;
 
 	const divider = period === "2023-09" ? 3 : 1; // because TVL tracking will start from 2023-09-20
