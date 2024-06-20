@@ -13,5 +13,5 @@ export const Footer = () => (<div className="max-w-md mx-auto mt-10 md:max-w-2xl
     <a className="p-2 hover:opacity-70" onClick={() => openExternalPageEvent("FOOTER", "FACEBOOK")} href="https://www.facebook.com/obyte.org" target="_blank" rel="noopener"><img src="/social_media/facebook.svg" alt="Obyte facebook" /></a>
     <a className="p-2 hover:opacity-70" onClick={() => openExternalPageEvent("FOOTER", "GITHUB")} href="https://github.com/byteball" target="_blank" rel="noopener"><img src="/social_media/github.svg" alt="Obyte github" /></a>
   </div>
-  <div className="p-10 text-center text-white/40"><a href="https://obyte.org" target="_blank" rel="noopener" onClick={() => openExternalPageEvent("FOOTER", "OBYTE")}>&copy; Obyte</a></div>
+  <div className="p-10 text-center text-white/40"><a href="https://obyte.org" target="_blank" rel="noopener" onClick={() => openExternalPageEvent("FOOTER", "OBYTE")}>Built on Obyte</a></div>
 </div>)
