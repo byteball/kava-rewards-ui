@@ -2,6 +2,7 @@ import { groupBy } from "lodash";
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
+import moment from "moment";
 
 import {
 	AddressPlaceholder,
@@ -33,6 +34,12 @@ const estimateRewards = async (snapshot, period) => {
 
 	const assetsByAddress = groupBy(balances, (b) => b.address.toUpperCase());
 
+	let distributionShare = appConfig.DISTRIBUTION_PERCENT / 100;
+
+	if (period !== "latest" && moment.utc(period).isBefore(moment("2024-06"))) {
+		distributionShare = 0.9;
+	}
+
 	return Object.entries(assetsByAddress).map(([walletAddress, assets]) => {
 
 		let totalWalletEffectiveUsdBalance = 0;
@@ -60,7 +67,7 @@ const estimateRewards = async (snapshot, period) => {
 			total_usd_balance,
 			effective_balances,
 			share: totalWalletEffectiveUsdBalance / snapshot.total_effective_usd_balance,
-			reward: (((totalMonthlyReward * (totalWalletEffectiveUsdBalance / snapshot.total_effective_usd_balance))) / divider) * (appConfig.DISTRIBUTION_PERCENT / 100)
+			reward: (((totalMonthlyReward * (totalWalletEffectiveUsdBalance / snapshot.total_effective_usd_balance))) / divider) * distributionShare
 		});
 	}).sort((a, b) => b.total_effective_usd_balance - a.total_effective_usd_balance);
 }
@@ -244,7 +251,7 @@ export const RewardTable = () => {
 										${toLocalString(Number(wallet.total_effective_usd_balance).toFixed(2))}
 									</button>
 								</BalanceDrawer></td>
-							<td className="hidden px-3 py-4 text-sm lg:table-cell ">{toLocalString(Number(((1 +  (((activePeriod?.value === "2023-09" ? 3 : 1) * wallet.reward) / wallet.total_usd_balance)) ** 12 - 1) * 100).toFixed(2))}%</td>
+							<td className="hidden px-3 py-4 text-sm lg:table-cell ">{toLocalString(Number(((1 + (((activePeriod?.value === "2023-09" ? 3 : 1) * wallet.reward) / wallet.total_usd_balance)) ** 12 - 1) * 100).toFixed(2))}%</td>
 						</tr>
 					))}
 
