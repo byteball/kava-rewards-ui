@@ -17,6 +17,7 @@ import { toLocalString, getTvlShare, getKavaPrice } from "utils";
 import backend, { getMonthName } from "services/backend";
 
 const MONTHLY_TOTAL_REWARDS_IN_KAVA = 1_100_000;
+const DISTRIBUTION_SHARE= 0.5;
 
 const estimateRewards = async (snapshot, period) => {
 	const tvlShare = await getTvlShare(period);
@@ -59,7 +60,7 @@ const estimateRewards = async (snapshot, period) => {
 			total_usd_balance,
 			effective_balances,
 			share: totalWalletEffectiveUsdBalance / snapshot.total_effective_usd_balance,
-			reward: (((totalMonthlyReward * (totalWalletEffectiveUsdBalance / snapshot.total_effective_usd_balance))) / divider) * 0.9
+			reward: (((totalMonthlyReward * (totalWalletEffectiveUsdBalance / snapshot.total_effective_usd_balance))) / divider) * DISTRIBUTION_SHARE
 		});
 	}).sort((a, b) => b.total_effective_usd_balance - a.total_effective_usd_balance);
 }
@@ -243,7 +244,7 @@ export const RewardTable = () => {
 										${toLocalString(Number(wallet.total_effective_usd_balance).toFixed(2))}
 									</button>
 								</BalanceDrawer></td>
-							<td className="hidden px-3 py-4 text-sm lg:table-cell ">{toLocalString(Number(((1 + (((activePeriod?.value === "2023-09" ? 3 : 1) * wallet.reward) / wallet.total_usd_balance)) ** 12 - 1) * 100).toFixed(2))}%</td>
+							<td className="hidden px-3 py-4 text-sm lg:table-cell ">{toLocalString(Number(((1 +  (((activePeriod?.value === "2023-09" ? 3 : 1) * wallet.reward) / wallet.total_usd_balance)) ** 12 - 1) * 100).toFixed(2))}%</td>
 						</tr>
 					))}
 
