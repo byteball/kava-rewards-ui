@@ -15,9 +15,9 @@ import { historyInstance } from "historyInstance";
 import { toLocalString, getTvlShare, getKavaPrice } from "utils";
 
 import backend, { getMonthName } from "services/backend";
+import appConfig from "appConfig";
 
 const MONTHLY_TOTAL_REWARDS_IN_KAVA = 1_100_000;
-const DISTRIBUTION_SHARE= 0.5;
 
 const estimateRewards = async (snapshot, period) => {
 	const tvlShare = await getTvlShare(period);
@@ -60,7 +60,7 @@ const estimateRewards = async (snapshot, period) => {
 			total_usd_balance,
 			effective_balances,
 			share: totalWalletEffectiveUsdBalance / snapshot.total_effective_usd_balance,
-			reward: (((totalMonthlyReward * (totalWalletEffectiveUsdBalance / snapshot.total_effective_usd_balance))) / divider) * DISTRIBUTION_SHARE
+			reward: (((totalMonthlyReward * (totalWalletEffectiveUsdBalance / snapshot.total_effective_usd_balance))) / divider) * (appConfig.DISTRIBUTION_PERCENT / 100)
 		});
 	}).sort((a, b) => b.total_effective_usd_balance - a.total_effective_usd_balance);
 }
