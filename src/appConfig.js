@@ -1,5 +1,6 @@
 export default {
   TESTNET: process.env.REACT_APP_TESTNET === "1",
+  DISTRIBUTION_PERCENT: process.env.REACT_APP_DISTRIBUTION_PERCENT,
   EXPLORER_URL: process.env.REACT_APP_TESTNET === "1" ? "https://testnetexplorer.obyte.org" : "https://explorer.obyte.org",
   BACKEND_URL: process.env.REACT_APP_BACKEND_URL,
   OSWAP_STATS_API_URL: process.env.REACT_APP_OSWAP_STATS_API_URL,
