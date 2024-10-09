@@ -125,7 +125,7 @@ export const HowItWorks = () => (<div className="max-w-5xl px-6 mx-auto lg:px-8"
     </div>
 
     <div className="w-full md:w-[50%]">
-      We receive the rewards from Kava monthly, for the previous month in the first days of the following month. We get them in KAVA, buy GBYTE for KAVA, and distribute the GBYTE proceeds to all users in proportion to their average effective balances (with LINE balances counted twice) during the previous month. The rewards are just sent to your wallet address that holds LINE and other tokens, you don’t have to do anything.
+      We receive the rewards from Kava monthly, for the previous month in the middle of the following month. We get them in KAVA, buy GBYTE for KAVA, and distribute the GBYTE proceeds to all users in proportion to their average effective balances (with LINE balances counted twice) during the previous month. The rewards are just sent to your wallet address that holds LINE and other tokens, you don’t have to do anything.
     </div>
   </div>
 </div>)
